@@ -1,6 +1,8 @@
 import cv2
 import numpy as np
 
+from utils.recog import detect_text
+
 
 def detect_shapes(image: np.ndarray):
     shapes = []
@@ -40,13 +42,17 @@ def detect_shapes(image: np.ndarray):
         
         # Draw and label the detected shape
         cv2.drawContours(image, [approx], -1, (0, 255, 0), 2)
-        cv2.putText(image, shape_name, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+        # cv2.putText(image, shape_name, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+                # Extract text from the shape
+        shape_roi = image[y:y+h, x:x+w]
+        text = detect_text(shape_roi)
         
         # Append detected shape data
         shapes.append({
             "name": shape_name,
             "coordinate": {"x": float(center_x), "y": float(center_y)},
-            "color": color
+            "color": color,
+            "text": text
         })
     
     return shapes, image
